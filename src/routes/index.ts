@@ -28,13 +28,13 @@ router.route('/photos/:id')
   .delete(deletePhotoById)
   .put(updatePhotoById)
 
-  router.route('/users')
-    .post(createUser)
-    .get(getUsers)
+router.route('/users')
+  .post(createUser)
+  .get(getUsers)
 
-  router.route('/users/:id')
-    .put(updateUserById)    
-    .delete(deleteUser)
-    .get(getUserById)
+router.route('/users/:id')
+  .put(updateUserById)    
+  .delete(deleteUser)
+  .get(getUserById)
 
 export default router;

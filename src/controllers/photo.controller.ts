@@ -1,4 +1,9 @@
-import { Request, Response, RequestParamHandler } from "express";
+import {
+  Request,
+  Response,
+  RequestParamHandler 
+} from "express";
+
 import Photo from "@models/Photo";
 import path from "path";
 import fs from 'fs-extra';
