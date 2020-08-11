@@ -1,11 +1,13 @@
 import { Schema, model } from "mongoose";
 import { PhotoSchema } from "./Photo";
-import { IUser } from "./IUser";
 
 const UserSchema = new Schema({
-   firstName: String,
-   lastName: String,
-   images: [PhotoSchema]
+   firstName: {type: String, required: true},
+   lastName: {type: String, required: true},
+   images: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Photo'
+   }]
 })
 
-export default model<IUser>('User', UserSchema);
+export default model('User', UserSchema);

@@ -1,11 +1,10 @@
 import { Schema, model } from "mongoose";
-import { IPhoto } from "./IPhoto";
 
 export const PhotoSchema = new Schema({
-  title: String,
-  description: String,
-  imagePath: String
+  title: {type: String, required: true},
+  description: {type: String},
+  imagePath: {type: String, required: true, unique: true, lowercase: true}
 });
 
 
-export default model<IPhoto>('Photo', PhotoSchema);
+export default model('Photo', PhotoSchema);
