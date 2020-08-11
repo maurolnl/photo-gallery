@@ -27,6 +27,7 @@ export async function getPhotoById(
   res:Response):Promise<Response>{
   const id = req.params.id;
   const photo = await Photo.findById(id);
+  
   return res.json({
     photo
   })
@@ -36,7 +37,7 @@ export async function getPhotoById(
 export async function deletePhotoById(req: Request, res: Response):Promise<Response>{
   const id = req.params.id;
   const photo = await Photo.findByIdAndRemove(id);
-
+  
   try {
     if(photo){
       await fs.unlink(path.resolve(photo.imagePath));

@@ -3,6 +3,7 @@ import morgan from "morgan";
 import indexRoutes from "@routes/index";
 import path from 'path';
 import helmet from 'helmet';
+import cors from "cors";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.set('port', process.env.PORT || 4000);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(helmet())
+app.use(cors());//Me permite conectarme a bases de datos externas
 
 //Routes
 app.use('/api', indexRoutes);//ruta base: /api -> luego se encarga indexRoutes de cada ruta

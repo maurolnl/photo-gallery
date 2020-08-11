@@ -14,7 +14,6 @@ import {
   getUsers,
   updateUserById,
   deleteUser,
-  getUserById
 } from "../controllers/user.controller";
 
 import multer from "../libs/multer";
@@ -35,6 +34,5 @@ router.route('/users')
 router.route('/users/:id')
   .put(updateUserById)    
   .delete(deleteUser)
-  .get(getUserById)
 
 export default router;
