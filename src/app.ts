@@ -2,10 +2,9 @@ import express from 'express';
 import morgan from "morgan";
 import indexRoutes from "@routes/index";
 import path from 'path';
+import helmet from 'helmet';
 
 const app = express();
-
-
 
 //setttings
 app.set('port', process.env.PORT || 4000);
@@ -13,6 +12,7 @@ app.set('port', process.env.PORT || 4000);
 //middlewares
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(helmet())
 
 //Routes
 app.use('/api', indexRoutes);//ruta base: /api -> luego se encarga indexRoutes de cada ruta
