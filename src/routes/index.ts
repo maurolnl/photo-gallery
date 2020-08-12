@@ -12,7 +12,7 @@ import {
 import {
   createUser,
   getUsers,
-  updateUserById,
+  updateUserPhotos,
   deleteUser,
 } from "../controllers/user.controller";
 
@@ -32,7 +32,7 @@ router.route('/users')
   .get(getUsers)
 
 router.route('/users/:id')
-  .put(updateUserById)    
   .delete(deleteUser)
-
+  .put(updateUserPhotos)
+  
 export default router;

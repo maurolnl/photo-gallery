@@ -26,8 +26,8 @@ export async function createUser(req: Request, res: Response):Promise<Response>{
 
 export async function getUsers(req: Request, res: Response):Promise<Response>{
    try {
-      const users = await User.find();
-
+      const users = await User.find().populate('images', 'title description imagePath -_id');
+      
       return res.json({
          users
       })
@@ -38,37 +38,35 @@ export async function getUsers(req: Request, res: Response):Promise<Response>{
    }
 }
 
-export async function updateUserById(req: Request, res: Response):Promise<Response>{
+export async function updateUserPhotos(req: Request, res: Response):Promise<void>{
    try {
-      const filter = {_id: req.params.id};
-      const update = {
-         userName: req.body.userName,
-         password: req.body.password
-      };
-      const updatedUser = await User.findByIdAndUpdate(filter, update, {new:true});
-
-      res.json({
-         "message": "User updated Successfully",
-         updatedUser
-      })
+      const { id } = req.params;
+      
+      const updatedUser = await User.findByIdAndUpdate(id, req.body, {new:true});
+      if(updatedUser){
+         res.json({
+            "message": "User updated Successfully",
+            updatedUser
+         })
+      }
+      res.json({"message": "Can't find user Id"});
    } catch (error) {
       res.json({error})
    }
-   return
 }
 
-export async function deleteUser(req: Request, res: Response):Promise<Response>{
+export async function deleteUser(req: Request, res: Response):Promise<void>{
    try {
       const id = req.params.id;
       const deletedUser = await User.findByIdAndDelete(id);
-      
-      res.json({
-         "message": "User deleted successfully",
-         deletedUser
-      })
+      if(deletedUser){
+         res.json({
+            "message": "User deleted successfully",
+            deletedUser
+         })
+      }
+      res.json({"message": "Can't find the user with the given ID"})
    } catch (error) {
       error
    }
-   return
-
 }

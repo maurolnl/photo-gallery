@@ -24,34 +24,32 @@ export async function getPhotos(req: Request, res: Response): Promise<Response>{
 
 export async function getPhotoById(
   req:Request,
-  res:Response):Promise<Response>{
+  res:Response):Promise<void>{
   const id = req.params.id;
   const photo = await Photo.findById(id);
-  
-  return res.json({
-    photo
-  })
-
+  if(photo){
+    res.json({
+      photo
+    })
+  }
+  res.json({"message": "Can't find photo with the given ID"})
 }
 
-export async function deletePhotoById(req: Request, res: Response):Promise<Response>{
+export async function deletePhotoById(req: Request, res: Response):Promise<void>{
   const id = req.params.id;
   const photo = await Photo.findByIdAndRemove(id);
   
   try {
     if(photo){
       await fs.unlink(path.resolve(photo.imagePath));
+      res.json({
+        message: 'Photo Remove Successfully',
+        photo
+      });  
     }
   } catch (error) {
-    throw new Error(error);
+    res.json({error});
   }
-  
-
-  return res.json({
-    message: 'Photo Remove Successfully',
-    photo
-  });
-
 }
 
 export async function createPhoto(req: Request, res: Response):Promise<Response>{
@@ -72,7 +70,7 @@ export async function createPhoto(req: Request, res: Response):Promise<Response>
   });
 }
 
-export async function updatePhotoById(req: Request, res: Response):Promise<Response>{
+export async function updatePhotoById(req: Request, res: Response):Promise<void>{
   const filter = { _id: req.params.id };
   const update = { 
     title: req.body.title,
@@ -80,9 +78,12 @@ export async function updatePhotoById(req: Request, res: Response):Promise<Respo
    };
 
   const updatedPhoto = await Photo.findOneAndUpdate(filter, update, {new: true});
-
-  return res.json({
-    message: 'Photo Updated Successfully',
-    updatedPhoto
-  })
+  
+  if(updatedPhoto){
+    res.json({
+      message: 'Photo Updated Successfully',
+      updatedPhoto
+    })
+  }
+  res.json({"message": "Can't find photo with the given ID"});
 }
