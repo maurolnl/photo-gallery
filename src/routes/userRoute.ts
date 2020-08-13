@@ -9,6 +9,7 @@ import {
   updateUserPhotos,
   deleteUser,
 } from "../controllers/user.controller";
+import { TokenVerification } from "../libs/verifyToken";
 
 router.route('/')
   .get(getUsers)
@@ -18,7 +19,7 @@ router.route('/:id')
   .put(updateUserPhotos)
 
 router.post('/signup', signUp);
-router.post('/signIn', signIn);
-router.post('/profile', profile);
+router.post('/signin', signIn);
+router.get('/profile', TokenVerification, profile);
 
 export default router;

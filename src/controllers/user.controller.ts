@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, response } from "express";
 import jwt from "jsonwebtoken";
  
 import User from "@models/User";
@@ -31,12 +31,24 @@ export async function signUp(req: Request, res: Response):Promise<void>{
    
 }
 
-export async function signIn(req:Request, res: Response):Promise<void> {
+export async function signIn(req:Request, res: Response):Promise<Response> {
+   const user: IUser = await User.findOne({email: req.body.email});
+   if(!user) return res.status(400).json('Email or Password is wrong');
 
+   const isValidPw: boolean = await user.validatePassword(req.body.password);
+   if(!isValidPw) return res.status(400).json('Invalid Password');
+
+   const token: string = jwt.sign(
+      { _id: user.id }, process.env.TOKEN_SECRET || 'othertoken'
+   );
+   res.header('auth-token', token).json(user);
 }
 
-export async function profile(req:Request, res: Response):Promise<void> {
-   
+export const profile = async (req:Request, res: Response):Promise<Response>=>{
+   const user: IUser = await User.findById(req.userId, { password: 0 });
+   if(!user) return res.status(404).json('UserId not found.');
+
+   return res.json(user);
 }
 
 export async function getUsers(req: Request, res: Response):Promise<Response>{
