@@ -1,7 +1,6 @@
 import {
   Request,
   Response,
-  RequestParamHandler 
 } from "express";
 
 import Photo from "@models/Photo";

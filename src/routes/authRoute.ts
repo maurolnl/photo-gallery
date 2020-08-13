@@ -6,11 +6,11 @@ import {
    profile
   } from "@controllers/auth.controllers";
 
-const authRoutes: Router = Router();
+const router: Router = Router();
 
-authRoutes.route('/auth')
+router.route('/auth')
    .post(signUp)
    .get(signIn)
    .get(profile)
 
-export default auth;
+export default router;

@@ -18,21 +18,13 @@ import {
 
 import multer from "../libs/multer";
 
-router.route('/photos')
+router.route('/')
   .post(multer.single('image'), createPhoto)
   .get(getPhotos)
 
-router.route('/photos/:id')
+router.route('/:id')
   .get(getPhotoById)
   .delete(deletePhotoById)
   .put(updatePhotoById)
-
-router.route('/users')
-  .post(createUser)
-  .get(getUsers)
-
-router.route('/users/:id')
-  .delete(deleteUser)
-  .put(updateUserPhotos)
-  
+ 
 export default router;
