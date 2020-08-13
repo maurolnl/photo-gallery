@@ -9,13 +9,6 @@ import {
   updatePhotoById
 } from "../controllers/photo.controller";
 
-import {
-  createUser,
-  getUsers,
-  updateUserPhotos,
-  deleteUser,
-} from "../controllers/user.controller";
-
 import multer from "../libs/multer";
 
 router.route('/')

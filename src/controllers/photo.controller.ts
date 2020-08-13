@@ -4,12 +4,13 @@ import {
 } from "express";
 
 import Photo from "@models/Photo";
+import {IPhoto} from "@models/IPhoto";
 import path from "path";
 import fs from 'fs-extra';
 
 export async function getPhotos(req: Request, res: Response): Promise<Response>{
   try {
-    const photos = await Photo.find();
+    const photos:IPhoto[] = await Photo.find();
     return res.json({
       photos
     })
@@ -25,7 +26,7 @@ export async function getPhotoById(
   req:Request,
   res:Response):Promise<void>{
   const id = req.params.id;
-  const photo = await Photo.findById(id);
+  const photo:IPhoto = await Photo.findById(id);
   if(photo){
     res.json({
       photo
@@ -36,7 +37,7 @@ export async function getPhotoById(
 
 export async function deletePhotoById(req: Request, res: Response):Promise<void>{
   const id = req.params.id;
-  const photo = await Photo.findByIdAndRemove(id);
+  const photo:IPhoto = await Photo.findByIdAndRemove(id);
   
   try {
     if(photo){
@@ -53,13 +54,13 @@ export async function deletePhotoById(req: Request, res: Response):Promise<void>
 
 export async function createPhoto(req: Request, res: Response):Promise<Response>{
   
-  const newPhoto = {
+  const newPhoto: IPhoto =  new Photo({
     title: req.body.title,
     description: req.body.description,
     imagePath:req.file.path 
-  } 
+  })
 
-  const photo = new Photo(newPhoto);
+  const photo: IPhoto = new Photo(newPhoto);
   console.log(photo);
   await photo.save();
 
@@ -71,12 +72,12 @@ export async function createPhoto(req: Request, res: Response):Promise<Response>
 
 export async function updatePhotoById(req: Request, res: Response):Promise<void>{
   const filter = { _id: req.params.id };
-  const update = { 
+  const update: IPhoto = new Photo({ 
     title: req.body.title,
     description: req.body.description 
-   };
+   });
 
-  const updatedPhoto = await Photo.findOneAndUpdate(filter, update, {new: true});
+  const updatedPhoto:IPhoto = await Photo.findOneAndUpdate(filter, update, {new: true});
   
   if(updatedPhoto){
     res.json({

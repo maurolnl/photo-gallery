@@ -1,32 +1,49 @@
 import { Request, Response } from "express";
-
+import jwt from "jsonwebtoken";
+ 
 import User from "@models/User";
+import {IUser} from "@models/IUser";
 
-export async function createUser(req: Request, res: Response):Promise<Response>{
-  try {
-   const newUser = {
+export async function signUp(req: Request, res: Response):Promise<void>{
+   //create data object
+   const newUser: IUser = new User({
       userName: req.body.userName,
       email: req.body.email,
       password: req.body.password,
-   }
+   });
 
-   const user = new User(newUser);
+   //Encrypt password
+   newUser.password = await newUser.encryptPassword(newUser.password);
+
+   //save new user in db
+   const user: IUser = new User(newUser);
    await user.save();
 
-   return res.json({
+   //token
+   const token: string = jwt.sign(
+      {_id: user._id}, process.env.TOKEN_SECRET || 'othertoken'
+   );
+
+   res.header('auth-token', token).json({
       "message": "User successfully saved",
-      user
+      user 
    })
-  } catch (error) {
-     return res.json({
-        error
-     })
-  } 
+   
+}
+
+export async function signIn(req:Request, res: Response):Promise<void> {
+
+}
+
+export async function profile(req:Request, res: Response):Promise<void> {
+   
 }
 
 export async function getUsers(req: Request, res: Response):Promise<Response>{
    try {
-      const users = await User.find().populate('images', 'title description imagePath -_id');
+      const users: IUser[] = await User.find().populate(
+         'images', 'title description imagePath -_id'
+      );
       
       return res.json({
          users
@@ -42,7 +59,7 @@ export async function updateUserPhotos(req: Request, res: Response):Promise<void
    try {
       const { id } = req.params;
       
-      const updatedUser = await User.findByIdAndUpdate(id, req.body, {new:true});
+      const updatedUser:IUser = await User.findByIdAndUpdate(id, req.body, {new:true});
       if(updatedUser){
          res.json({
             "message": "User updated Successfully",
@@ -58,7 +75,7 @@ export async function updateUserPhotos(req: Request, res: Response):Promise<void
 export async function deleteUser(req: Request, res: Response):Promise<void>{
    try {
       const id = req.params.id;
-      const deletedUser = await User.findByIdAndDelete(id);
+      const deletedUser: IUser = await User.findByIdAndDelete(id);
       if(deletedUser){
          res.json({
             "message": "User deleted successfully",
