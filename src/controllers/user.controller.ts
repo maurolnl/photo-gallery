@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 import User from "@models/User";
 import {IUser} from "@models/IUser";
 
-export async function signUp(req: Request, res: Response):Promise<void>{
+export const signUp = async(
+   req: Request, res: Response
+   ):Promise<void> => {
+      
    //create data object
    const newUser: IUser = new User({
       userName: req.body.userName,
@@ -31,7 +34,9 @@ export async function signUp(req: Request, res: Response):Promise<void>{
    
 }
 
-export async function signIn(req:Request, res: Response):Promise<Response> {
+export const signIn = async(
+   req:Request, res: Response
+   ):Promise<Response> =>{
    const user: IUser = await User.findOne({email: req.body.email});
    if(!user) return res.status(400).json('Email or Password is wrong');
 
@@ -44,14 +49,20 @@ export async function signIn(req:Request, res: Response):Promise<Response> {
    res.header('auth-token', token).json(user);
 }
 
-export const profile = async (req:Request, res: Response):Promise<Response>=>{
+export const profile = async (
+   req:Request, res: Response
+   ):Promise<Response>=>{
+  
    const user: IUser = await User.findById(req.userId, { password: 0 });
    if(!user) return res.status(404).json('UserId not found.');
 
    return res.json(user);
 }
 
-export async function getUsers(req: Request, res: Response):Promise<Response>{
+export const getUsers = async(
+   req: Request, res: Response
+   ):Promise<Response>=>{
+
    try {
       const users: IUser[] = await User.find().populate(
          'images', 'title description imagePath -_id'
@@ -67,7 +78,10 @@ export async function getUsers(req: Request, res: Response):Promise<Response>{
    }
 }
 
-export async function updateUserPhotos(req: Request, res: Response):Promise<void>{
+export const updateUserPhotos = async(
+   req: Request, res: Response
+   ):Promise<void>=>{
+
    try {
       const { id } = req.params;
       
@@ -84,7 +98,10 @@ export async function updateUserPhotos(req: Request, res: Response):Promise<void
    }
 }
 
-export async function deleteUser(req: Request, res: Response):Promise<void>{
+export const deleteUser = async(
+   req: Request, res: Response
+   ):Promise<void>=>{
+
    try {
       const id = req.params.id;
       const deletedUser: IUser = await User.findByIdAndDelete(id);

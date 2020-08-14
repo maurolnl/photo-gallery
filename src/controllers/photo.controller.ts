@@ -8,7 +8,11 @@ import {IPhoto} from "@models/IPhoto";
 import path from "path";
 import fs from 'fs-extra';
 
-export async function getPhotos(req: Request, res: Response): Promise<Response>{
+//Get mapping -> get all photos
+export const getPhotos = async(
+  req: Request, res: Response
+  ): Promise<Response>=>{
+
   try {
     const photos:IPhoto[] = await Photo.find();
     return res.json({
@@ -22,9 +26,11 @@ export async function getPhotos(req: Request, res: Response): Promise<Response>{
 
 }
 
-export async function getPhotoById(
+//GET mapping get photos by photo id
+export const getPhotoById = async(
   req:Request,
-  res:Response):Promise<void>{
+  res:Response):Promise<void>=>{
+
   const id = req.params.id;
   const photo:IPhoto = await Photo.findById(id);
   if(photo){
@@ -35,7 +41,11 @@ export async function getPhotoById(
   res.json({"message": "Can't find photo with the given ID"})
 }
 
-export async function deletePhotoById(req: Request, res: Response):Promise<void>{
+//DELETE mapping delete photo by photo id
+export const deletePhotoById = async(
+  req: Request, res: Response
+  ):Promise<void>=>{
+
   const id = req.params.id;
   const photo:IPhoto = await Photo.findByIdAndRemove(id);
   
@@ -52,7 +62,10 @@ export async function deletePhotoById(req: Request, res: Response):Promise<void>
   }
 }
 
-export async function createPhoto(req: Request, res: Response):Promise<Response>{
+//POST mapping -> create a given photo
+export const createPhoto = async(
+  req: Request, res: Response
+  ):Promise<Response>=>{
   
   const newPhoto: IPhoto =  new Photo({
     title: req.body.title,
@@ -70,7 +83,11 @@ export async function createPhoto(req: Request, res: Response):Promise<Response>
   });
 }
 
-export async function updatePhotoById(req: Request, res: Response):Promise<void>{
+//POST mapping -> update photo by photo id
+export const updatePhotoById = async(
+  req: Request, res: Response
+  ):Promise<void>=>{
+
   const filter = { _id: req.params.id };
   const update: IPhoto = new Photo({ 
     title: req.body.title,

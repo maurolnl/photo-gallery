@@ -10,14 +10,15 @@ import {
 } from "../controllers/photo.controller";
 
 import multer from "../libs/multer";
+import { TokenVerification } from "src/libs/verifyToken";
 
 router.route('/')
-  .post(multer.single('image'), createPhoto)
+  .post(multer.single('image'), TokenVerification, createPhoto)
   .get(getPhotos)
 
 router.route('/:id')
   .get(getPhotoById)
-  .delete(deletePhotoById)
-  .put(updatePhotoById)
+  .delete(TokenVerification, deletePhotoById)
+  .put(TokenVerification,updatePhotoById)
  
 export default router;

@@ -7,7 +7,7 @@ export const TokenVerification = (
    res: Response,
    next: NextFunction) => {
    const token = req.header('auth-token');
-   if(!token) res.status(401).json('Access denied');
+   if(!token) return res.status(401).json('Access denied');
 
    const payload = jwt.verify(
       token, process.env.TOKEN_SECRET || 'othertoken'

@@ -12,11 +12,11 @@ import {
 import { TokenVerification } from "../libs/verifyToken";
 
 router.route('/')
-  .get(getUsers)
+  .get(TokenVerification, getUsers)
 
 router.route('/:id')
-  .delete(deleteUser)
-  .put(updateUserPhotos)
+  .delete(TokenVerification, deleteUser)
+  .put(TokenVerification, updateUserPhotos)
 
 router.post('/signup', signUp);
 router.post('/signin', signIn);
