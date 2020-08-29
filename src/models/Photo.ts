@@ -1,10 +1,14 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 import {IPhoto} from "./IPhoto";
 
 export const PhotoSchema = new Schema({
   title: {type: String, required: true},
   description: {type: String},
-  imagePath: {type:String, required: true}
+  imagePath: {type:String, required: true},
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 

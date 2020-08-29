@@ -13,70 +13,69 @@ export const getPhotos = async(
   req: Request, res: Response
   ): Promise<Response>=>{
 
-  try {
-    const photos:IPhoto[] = await Photo.find();
-    return res.json({
-      photos
-    })
-  } catch (Exception) {
-    return res.json({
-      Exception
-    })
-  }
-
+    const photos:IPhoto[] = await Photo.find().populate(
+      'author', 'userName -_id'
+    );
+    
+    return res.json({photos});
 }
 
-//GET mapping get photos by photo id
+//GET mapping -> get photos by ID
 export const getPhotoById = async(
   req:Request,
-  res:Response):Promise<void>=>{
+  res:Response):Promise<Response>=>{
 
   const id = req.params.id;
-  const photo:IPhoto = await Photo.findById(id);
-  if(photo){
-    res.json({
-      photo
-    })
-  }
-  res.json({"message": "Can't find photo with the given ID"})
+  const photo:IPhoto = await Photo.findById(id).populate(
+    'author', 'userName -_id'
+  );
+  
+  if(!photo) return res.status(404).json('Photo ID not found');
+
+  return res.json(photo);
 }
 
-//DELETE mapping delete photo by photo id
+//DELETE mapping -> delete photo ID
 export const deletePhotoById = async(
   req: Request, res: Response
-  ):Promise<void>=>{
+  ):Promise<Response>=>{
+
+  const photoControl:IPhoto = await Photo.findById(req.params.id);
+
+  //Checks
+  if(req.userId != photoControl.author) return res.status(403).json(
+    'You cant update an image that you dont own'
+  );
+  if(!photoControl) return res.status(404).json('Photo ID not found');
 
   const id = req.params.id;
   const photo:IPhoto = await Photo.findByIdAndRemove(id);
-  
-  try {
-    if(photo){
-      await fs.unlink(path.resolve(photo.imagePath));
-      res.json({
-        message: 'Photo Remove Successfully',
-        photo
-      });  
-    }
-  } catch (error) {
-    res.json({error});
-  }
+
+  //Delete photo from disk
+  await fs.unlink(path.resolve(photo.imagePath));
+  return res.json({
+    message: 'Photo Remove Successfully',
+    photo
+  });  
+
 }
 
 //POST mapping -> create a given photo
 export const createPhoto = async(
   req: Request, res: Response
   ):Promise<Response>=>{
-  
+ 
+  //Create data object
   const newPhoto: IPhoto =  new Photo({
     title: req.body.title,
     description: req.body.description,
-    imagePath:req.file.path 
+    imagePath:req.file.path,
+    author: req.userId
   })
 
   const photo: IPhoto = new Photo(newPhoto);
-  console.log(photo);
   await photo.save();
-
+ 
   return res.json({
     message: 'Photo successfully saved',
     photo
@@ -86,21 +85,22 @@ export const createPhoto = async(
 //POST mapping -> update photo by photo id
 export const updatePhotoById = async(
   req: Request, res: Response
-  ):Promise<void>=>{
+  ):Promise<Response>=>{
 
-  const filter = { _id: req.params.id };
-  const update: IPhoto = new Photo({ 
-    title: req.body.title,
-    description: req.body.description 
-   });
-
-  const updatedPhoto:IPhoto = await Photo.findOneAndUpdate(filter, update, {new: true});
+  const photo:IPhoto = await Photo.findById(req.params.id);
+  if(req.userId != photo.author) return res.status(403).json(
+    'You cant update an image that you dont own'
+  );
   
-  if(updatedPhoto){
-    res.json({
-      message: 'Photo Updated Successfully',
-      updatedPhoto
-    })
-  }
-  res.json({"message": "Can't find photo with the given ID"});
+  const { id } = req.params;
+  const updatedPhoto:IPhoto = await Photo.findByIdAndUpdate(
+    id, req.body, {new: true}
+  );
+ 
+  if(!updatedPhoto) return res.status(404).json('Photo ID not found');
+  
+  return res.json({
+    message: 'Photo Updated Successfully',
+    updatedPhoto
+  });
 }
